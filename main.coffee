@@ -4,8 +4,8 @@ height = 400
 viewport =
   x: -0.775
   y: -0.1
-  width: 0.05
-  height: 0.02
+  width: 0.07
+  height: 0.04
 
 #viewport =
   #x: -2.5
@@ -13,16 +13,27 @@ viewport =
   #width: 3.5
   #height: 2
 
-pre = document.createElement 'pre'
+cursorText = document.createElement 'pre'
+viewportText = document.createElement 'pre'
 
 canvas = document.createElement 'canvas'
 canvas.width = width
 canvas.height = height
 
-document.body.appendChild canvas
-document.body.appendChild pre
-
 context = canvas.getContext '2d'
+
+document.body.appendChild canvas
+document.body.appendChild viewportText
+document.body.appendChild cursorText
+
+document.onkeydown = ({keyCode}) ->
+  switch keyCode
+    when 187
+      zoomIn(viewport)
+      render()
+    when 189
+      zoomOut(viewport)
+      render()
 
 context.fillStyle = "white"
 context.fillRect(0, 0, width, height)
@@ -56,11 +67,21 @@ plot = (x, y, n) ->
   context.fillStyle = "rgb(#{r}, #{g}, #{b})"
   context.fillRect(x, y, 1, 1)
 
+format = (f) ->
+  f.toFixed(8)
+
 render = ->
   [0...height].forEach (py) ->
     [0...width].forEach (px) ->
       n = compute(px, py, viewport)
       plot(px, py, n)
+
+  viewportText.textContent = """
+    x: #{format viewport.x}
+    y: #{format viewport.y}
+    width: #{format viewport.width}
+    height: #{format viewport.height}
+  """
 
 canvas.onmousedown = (e) ->
   {offsetX:px, offsetY:py} = e
@@ -74,13 +95,27 @@ canvas.onmousemove = (e) ->
   
   p = pixelToWorld(px, py, viewport)
 
-  pre.textContent = """
-    x: #{p.x.toFixed(8)}
-    y: #{p.y.toFixed(8)}
+  cursorText.textContent = """
+    x: #{format p.x}
+    y: #{format p.y}
   """
 
 centerViewport = (p, viewport) ->
   viewport.x = p.x - viewport.width/2
   viewport.y = p.y - viewport.height/2
+
+zoomIn = (viewport) ->
+  viewport.width /= 2
+  viewport.height /= 2
+
+  viewport.x += viewport.width/2
+  viewport.y += viewport.height/2
+
+zoomOut = (viewport) ->
+  viewport.x -= viewport.width/2
+  viewport.y -= viewport.height/2
+  
+  viewport.width *= 2
+  viewport.height *= 2
 
 render()
