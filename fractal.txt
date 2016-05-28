@@ -15,3 +15,5 @@ For each pixel (Px, Py) on the screen, do:
   color = palette[iteration]
   plot(Px, Py, color)
 }
+
+(a + bi)^2 = (a^2 + (bi)^2 + 2abi)
