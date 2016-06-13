@@ -55,9 +55,20 @@ compute = (px, py, viewport) ->
     xtemp = x*x - y*y + x0
     y = 2*x*y + y0
     x = xtemp
-    iteration = iteration + 1
+    iteration += 1
 
   return iteration
+
+computePolar = (c) ->
+  iteration = 0
+  
+  # TODO
+  # It turns out that adding polar numbers is non-trivial
+  # but it will be good to implement it just to see :P
+  while r < 4 and iteration < ITERATION_MAX
+    
+
+    iteration += 1
 
 plot = (x, y, n) ->
   ni = ITERATION_MAX - n
@@ -85,20 +96,29 @@ render = ->
 
 canvas.onmousedown = (e) ->
   {offsetX:px, offsetY:py} = e
-  
+
   p = pixelToWorld(px, py, viewport)
   centerViewport(p, viewport)
   render()
 
 canvas.onmousemove = (e) ->
   {offsetX:px, offsetY:py} = e
-  
+
   p = pixelToWorld(px, py, viewport)
 
   cursorText.textContent = """
     x: #{format p.x}
     y: #{format p.y}
   """
+
+Polar =
+  new: (x, y) ->
+    r: Math.sqrt x * x + y * y
+    θ: Math.atan2 y, x
+
+  multiply: (a, b) ->
+    r: a.r * b.r
+    θ: a.θ + b.θ
 
 centerViewport = (p, viewport) ->
   viewport.x = p.x - viewport.width/2
@@ -114,7 +134,7 @@ zoomIn = (viewport) ->
 zoomOut = (viewport) ->
   viewport.x -= viewport.width/2
   viewport.y -= viewport.height/2
-  
+
   viewport.width *= 2
   viewport.height *= 2
 
