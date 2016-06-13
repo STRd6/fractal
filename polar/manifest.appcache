@@ -1,0 +1,12 @@
+CACHE MANIFEST
+# 1465785568823
+
+CACHE:
+index.html
+../polar.json
+
+
+NETWORK:
+https://*
+http://*
+*
